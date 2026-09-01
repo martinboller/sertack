@@ -91,15 +91,17 @@ def execute_md_dump(ser):
 
 def display_interactive_menu(ser):
     while True:
-        print("\n" + "=" * 45)
-        print("         U-BOOT AUTOMATION MENU")
-        print("=" * 45)
-        print(" 1. Execute 'printenv'")
+        print("\n" + "=" * 50)
+        print("                 sertack MENU")
+        print("=" * 50)
+        print(" 1. Execute U-BOOT 'printenv'")
         print(" 2. Dump Firmware/Memory to File (md.b)")
-        print(" 3. Reset Device ('reset')")
+        print(" 3. Execute U-BOOT 'help'")
         print(" 4. Return to Interactive Terminal")
-        print(" 5. Exit Script")
-        print("=" * 45)
+        print(" 5. Reset Device and keep VT100 terminal running")
+        print(" 6. Mount Root within - Failsafe -")
+        print(" 7. Exit")
+        print("=" * 50)
         
         choice = input("Select an option: ").strip().lower()
 
@@ -109,14 +111,21 @@ def display_interactive_menu(ser):
         elif choice == '2':
             execute_md_dump(ser)
         elif choice == '3':
-            print("\n[+] Resetting device...\n")
-            send_uboot_cmd(ser, "reset", wait_time=0.5)
-            return 'exit'
+            ser.write(b'help\n')
         elif choice == '4':
             print("\n[+] Returning to Interactive Terminal...")
-            ser.write(b'help\n')
+            #ser.write(b'help\n')
             return 'vt100'
-        elif choice in ('5', 'q', 'exit'):
+        elif choice == '5':
+            print("\n[+] Resetting device...\n")
+            send_uboot_cmd(ser, "reset", wait_time=0.5)
+            return 'vt100'
+        elif choice == '6':
+            print("\n[+] Mounting Root...\n")
+            send_uboot_cmd(ser, "mount_root", wait_time=1.5)
+            return 'vt100'
+
+        elif choice in ('7', 'q', 'exit'):
             print("\n[+] Cleanly exiting script...")
             return 'exit'
         else:
@@ -127,7 +136,7 @@ def run_interactive_vt100(ser, stop_event):
     print("      INTERACTIVE VT100 TERMINAL ACTIVE          ")
     print("   Press 'Ctrl+B' for Menu | Press 'Ctrl+]' to Exit ")
     print("-------------------------------------------------\n")
-    ser.write(b'help\n')
+    ser.write(b'\r')
     
     if os.name != 'nt':
         fd = sys.stdin.fileno()

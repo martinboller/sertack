@@ -29,7 +29,7 @@ pip install pyserial
 ## Usage
 ### Syntax
 ```Bash
-python uboot_tool.py [PORT] [BAUD] [TRIGGER_PAYLOAD] [TARGET_PROMPT] [INTERVAL] [INTERACTIVE_BAUD]
+python sertack.py [PORT] [BAUD] [TRIGGER_PAYLOAD] [TARGET_PROMPT] [INTERVAL] [INTERACTIVE_BAUD]
 ```
 Positional Arguments
 | Argument | Default | Description |
@@ -46,28 +46,33 @@ Positional Arguments
 Send character '4' at 115200 baud every 50ms until the prompt MT7620 # appears:
 
 ```Bash
-python uboot_tool.py /dev/ttyUSB0 115200 "4" "MT7620 #" 0.05
+python sertack.py /dev/ttyUSB0 115200 "4" "MT7620 #" 0.05
 ```
 
 2. Triggering with Carriage Return / Line Feed (\r\n)
 Pass escape sequences in quotes to interrupt targets requiring newlines:
 
 ```Bash
-python uboot_tool.py /dev/ttyUSB0 57600 "4\\r\\n" "MT7620 #" 0.05
+python sertack.py /dev/ttyUSB0 57600 "4\\r\\n" "MT7620 #" 0.05
 ```
 
 3. Break Sequence via Ctrl+C (\x03)
 Send ASCII End-of-Text (0x03) to break standard boot timers:
 
 ```Bash
-python uboot_tool.py /dev/ttyUSB0 115200 "\\x03" "U-Boot>" 0.02
+python sertack.py /dev/ttyUSB0 115200 "\\x03" "U-Boot>" 0.02
 ```
 
 4. Dynamic Baud Rate Transition
-Hammer at 57,600 baud during boot, then transition the serial session to 115,200 baud once caught:
+Hammer at 57,600 baud during boot, then transition the serial session to 115200 baud once caught:
 
 ```Bash
-python uboot_tool.py /dev/ttyUSB0 57600 "4" "MT7620 #" 0.05 115200
+python sertack.py /dev/ttyUSB0 57600 "4" "MT7620 #" 0.05 115200
+```
+5. Enter Failsafe mode on openWRT/LEDE devices (Not U-BOOT related)
+
+```Bash
+python3 sertack.py /dev/ttyACM0 115200 "f\r\n" "- failsafe -"
 ```
 
 ### In-Session Keyboard Shortcuts
@@ -163,7 +168,7 @@ pip install pyserial
 Usage
 Syntax
 Bash
-python uboot_tool.py [PORT] [BAUD] [TRIGGER_PAYLOAD] [TARGET_PROMPT] [INTERVAL] [INTERACTIVE_BAUD]
+python sertack.py [PORT] [BAUD] [TRIGGER_PAYLOAD] [TARGET_PROMPT] [INTERVAL] [INTERACTIVE_BAUD]
 Positional Arguments
 Argument	Default	Description
 PORT	/dev/ttyUSB0	Serial port connected to the device UART.
@@ -177,22 +182,22 @@ Examples
 Send character '4' at 115200 baud every 50ms until the prompt MT7620 # appears:
 
 Bash
-python uboot_tool.py /dev/ttyUSB0 115200 "4" "MT7620 #" 0.05
+python sertack.py /dev/ttyUSB0 115200 "4" "MT7620 #" 0.05
 2. Triggering with Carriage Return / Line Feed (\r\n)
 Pass escape sequences in quotes to interrupt targets requiring newlines:
 
 Bash
-python uboot_tool.py /dev/ttyUSB0 57600 "4\r\n" "MT7620 #" 0.05
+python sertack.py /dev/ttyUSB0 57600 "4\r\n" "MT7620 #" 0.05
 3. Break Sequence via Ctrl+C (\x03)
 Send ASCII End-of-Text (0x03) to break standard boot timers:
 
 Bash
-python uboot_tool.py /dev/ttyUSB0 115200 "\x03" "U-Boot>" 0.02
+python sertack.py /dev/ttyUSB0 115200 "\x03" "U-Boot>" 0.02
 4. Dynamic Baud Rate Transition
 Hammer at 57,600 baud during boot, then transition the serial session to 115,200 baud once caught:
 
 Bash
-python uboot_tool.py /dev/ttyUSB0 57600 "4" "MT7620 #" 0.05 115200
+python sertack.py /dev/ttyUSB0 57600 "4" "MT7620 #" 0.05 115200
 In-Session Keyboard Shortcuts
 Once the trigger prompt is detected, the script drops into interactive VT100 terminal mode. Use the following escape key shortcuts:
 
@@ -256,7 +261,7 @@ pip install pyserial
 ### Syntax
 
 ```bash
-python uboot_tool.py [PORT] [BAUD] [TRIGGER_PAYLOAD] [TARGET_PROMPT] [INTERVAL] [INTERACTIVE_BAUD]
+python sertack.py [PORT] [BAUD] [TRIGGER_PAYLOAD] [TARGET_PROMPT] [INTERVAL] [INTERACTIVE_BAUD]
 ```
 
 ### Positional Arguments
@@ -278,7 +283,7 @@ python uboot_tool.py [PORT] [BAUD] [TRIGGER_PAYLOAD] [TARGET_PROMPT] [INTERVAL] 
 Send character `'4'` at 115200 baud every 50ms until the prompt `MT7620 #` appears:
 
 ```bash
-python uboot_tool.py /dev/ttyUSB0 115200 "4" "MT7620 #" 0.05
+python sertack.py /dev/ttyUSB0 115200 "4" "MT7620 #" 0.05
 ```
 
 ### 2. Triggering with Carriage Return / Line Feed (`
@@ -286,21 +291,21 @@ python uboot_tool.py /dev/ttyUSB0 115200 "4" "MT7620 #" 0.05
 Pass escape sequences in quotes to interrupt targets requiring newlines:
 
 ```bash
-python uboot_tool.py /dev/ttyUSB0 57600 "4\r\n" "MT7620 #" 0.05
+python sertack.py /dev/ttyUSB0 57600 "4\r\n" "MT7620 #" 0.05
 ```
 
 ### 3. Break Sequence via `Ctrl+C` (` `)
 Send ASCII End-of-Text (`0x03`) to break standard boot timers:
 
 ```bash
-python uboot_tool.py /dev/ttyUSB0 115200 "\x03" "U-Boot>" 0.02
+python sertack.py /dev/ttyUSB0 115200 "\x03" "U-Boot>" 0.02
 ```
 
 ### 4. Dynamic Baud Rate Transition
 Hammer at 57,600 baud during boot, then transition the serial session to 115,200 baud once caught:
 
 ```bash
-python uboot_tool.py /dev/ttyUSB0 57600 "4" "MT7620 #" 0.05 115200
+python sertack.py /dev/ttyUSB0 57600 "4" "MT7620 #" 0.05 115200
 ```
 
 ---
