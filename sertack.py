@@ -12,6 +12,41 @@ else:
 
 dump_file_path = None
 
+def print_help():
+    help_text = """
+sertack - Automated Bootloader Interrupt & Interactive Serial Terminal Tool
+
+Usage:
+  python sertack.py [port] [baud] [raw_trigger] [target_prompt] [interval] [interactive_baud]
+  python sertack.py -h | --help
+
+Positional Arguments (Optional):
+  1. port              Serial port device path (e.g., /dev/ttyUSB0, COM3).
+                       [default: /dev/ttyUSB0]
+  2. baud              Initial serial baud rate used during boot hammering.
+                       [default: 115200]
+  3. raw_trigger       Payload string sent continuously to interrupt the boot process.
+                       Supports escape sequences (e.g., '4', '\\r\\n', '\\x03').
+                       [default: "4"]
+  4. target_prompt     Substring/prompt expected upon successfully breaking boot.
+                       [default: "MT7620 #"]
+  5. interval          Delay in seconds between trigger payloads.
+                       [default: 0.05]
+  6. interactive_baud  Baud rate to switch to after prompt detection (if different).
+                       [default: same as initial baud]
+
+Interactive Terminal Keybindings:
+  Ctrl+B               Open the interactive sertack menu (memory dump, printenv, reset, etc.)
+  Ctrl+]               Exit the script cleanly
+
+Examples:
+  python sertack.py
+  python sertack.py /dev/ttyUSB0 115200 "4" "MT7620 #"
+  python sertack.py COM4 57600 "\\x03" "U-Boot>" 0.02
+  python sertack.py /dev/ttyUSB0 115200 "4\\r\\n" "uboot>" 0.05 115200
+"""
+    print(help_text.strip())
+
 def parse_payload_arg(raw_arg: str) -> bytes:
     """
     Parses a string containing potential escape sequences (\r, \n, \x00, etc.)
@@ -114,7 +149,6 @@ def display_interactive_menu(ser):
             ser.write(b'help\n')
         elif choice == '4':
             print("\n[+] Returning to Interactive Terminal...")
-            #ser.write(b'help\n')
             return 'vt100'
         elif choice == '5':
             print("\n[+] Resetting device...\n")
@@ -180,6 +214,10 @@ def run_interactive_vt100(ser, stop_event):
     return 'exit'
 
 def main():
+    if any(arg in ('-h', '--help') for arg in sys.argv[1:]):
+        print_help()
+        sys.exit(0)
+
     port = sys.argv[1] if len(sys.argv) > 1 else '/dev/ttyUSB0'
     baud = int(sys.argv[2]) if len(sys.argv) > 2 else 115200
     raw_trigger = sys.argv[3] if len(sys.argv) > 3 else "4"
